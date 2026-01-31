@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>À propos - Plan de Vol</title>
+  <link rel="icon" type="image/x-icon" href="./favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./favicon/apple-touch-icon.png">
+  <link rel="manifest" href="./favicon/site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0d11;
+      --surface: #11161f;
+      --muted: #7b8798;
+      --text: #e8ecf2;
+      --accent: #5bc0de;
+      --accent-2: #9b6bff;
+      --border: #1f2530;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(91, 192, 222, 0.18), transparent 35%),
+        radial-gradient(circle at 80% 10%, rgba(155, 107, 255, 0.14), transparent 30%),
+        radial-gradient(circle at 70% 70%, rgba(91, 192, 222, 0.12), transparent 25%);
+      filter: blur(50px);
+      opacity: 0.7;
+      z-index: 0;
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: url("./DA40.png") center center / cover no-repeat;
+      opacity: 0.4;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      padding: 20px;
+      background: rgba(10, 13, 17, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .header a:hover {
+      text-decoration: underline;
+    }
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+    h1 {
+      font-size: 42px;
+      margin: 0 0 20px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .card {
+      background: rgba(17, 22, 31, 0.8);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 40px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+      margin-bottom: 30px;
+    }
+    h2 {
+      color: var(--accent);
+      margin: 0 0 16px;
+      font-size: 24px;
+    }
+    p {
+      line-height: 1.7;
+      color: var(--text);
+      margin: 0 0 16px;
+    }
+    .version-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      background: rgba(91, 192, 222, 0.2);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 14px;
+      margin-left: 12px;
+    }
+    ul {
+      line-height: 1.8;
+      color: var(--text);
+      padding-left: 24px;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="./index.html">← Retour à l'accueil</a>
+  </div>
+  <div class="container">
+    <div class="card">
+      <h1>À propos<span class="version-badge">Version 1.0</span></h1>
+      
+      <h2>Le concept</h2>
+      <p>
+        Plan de Vol est une application web qui permet de créer et gérer des logs de navigation aéronautique de manière numérique. 
+        Cette application remplace les traditionnels logs papier par une interface moderne et intuitive.
+      </p>
+      
+      <h2>Fonctionnalités</h2>
+      <ul>
+        <li>Saisie complète des informations de vol (avion, aéroports, fréquences)</li>
+        <li>Gestion des étapes de vol (segments et points de report)</li>
+        <li>Calcul automatique du carburant nécessaire selon la consommation et les durées</li>
+        <li>Génération de PDF professionnel</li>
+        <li>Interface sombre et épurée, optimisée pour la saisie</li>
+      </ul>
+      
+      <h2>Version 1.0</h2>
+      <p>
+        Cette première version (V1.0) constitue la base fonctionnelle de l'application. 
+        Elle permet la création complète de logs de navigation avec toutes les informations essentielles 
+        pour un vol en sécurité.
+      </p>
+      <p>
+        Les améliorations futures incluront notamment des fonctionnalités supplémentaires, 
+        l'optimisation de l'expérience utilisateur, et la possibilité de sauvegarder et charger 
+        des logs précédents.
+      </p>
+      
+      <h2>Utilisation</h2>
+      <p>
+        Pour créer un nouveau log de navigation, cliquez sur "Créer un log de nav" depuis la page d'accueil. 
+        Remplissez tous les champs nécessaires, ajoutez vos étapes de vol, et générez le PDF final 
+        pour l'archiver ou l'imprimer.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
+
