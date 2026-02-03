@@ -39,9 +39,9 @@ Comme il s'agit d'une application front-end, aucune installation complexe n'est 
 
 Évolutions à venir (Roadmap)
 
-[ ] Calcul automatique de la dérive et de la vitesse sol (WCA & GS).
+- Calcul automatique de la dérive et de la vitesse sol (WCA & GS).
 
-[ ] Sauvegarde locale des navigations précédentes.
+- Sauvegarde locale des navigations précédentes.
 
 ## Contribution
 Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une Issue pour signaler un bug ou à soumettre une Pull Request pour proposer une amélioration.
