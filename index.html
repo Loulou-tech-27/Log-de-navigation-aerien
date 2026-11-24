@@ -2,8 +2,10 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-cache" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Plan de Vol - Accueil</title>
+  <title>Plan de Vol — Log de navigation VFR</title>
+  <meta name="description" content="Préparez vos logs de navigation VFR en ligne : calculs automatiques du vent, des temps, du carburant et de la masse, puis PDF prêt à imprimer.">
   <link rel="icon" type="image/x-icon" href="./favicon/favicon.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png">
   <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png">
@@ -15,13 +17,14 @@
   <style>
     :root {
       color-scheme: dark;
-      --bg: #0a0d11;
-      --surface: #11161f;
-      --muted: #7b8798;
-      --text: #e8ecf2;
-      --accent: #5bc0de;
-      --accent-2: #9b6bff;
-      --border: #1f2530;
+      --bg: #070a0e;
+      --surface: #0f151d;
+      --muted: #8b97a8;
+      --muted-2: #64707f;
+      --text: #e6ecf3;
+      --accent: #4cc3e0;
+      --accent-2: #8b6cff;
+      --border: #1e2733;
       --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
     }
     * { box-sizing: border-box; }
@@ -31,119 +34,165 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
-    body::before {
+    .bg { position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 0; pointer-events: none; }
+    .bg::before {
       content: "";
       position: absolute;
-      inset: 0;
-      background: 
-        radial-gradient(circle at 20% 20%, rgba(91, 192, 222, 0.18), transparent 35%),
-        radial-gradient(circle at 80% 10%, rgba(155, 107, 255, 0.14), transparent 30%),
-        radial-gradient(circle at 70% 70%, rgba(91, 192, 222, 0.12), transparent 25%);
-      filter: blur(50px);
-      opacity: 0.7;
-      z-index: 0;
-    }
-    body::after {
-      content: "";
-      position: absolute;
-      inset: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
       background: url("./DA40.png") center center / cover no-repeat;
-      opacity: 0.4;
-      pointer-events: none;
-      z-index: 0;
+      opacity: 0.22;
+      filter: saturate(0.8);
     }
-    .container {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      max-width: 800px;
-      padding: 40px 20px;
+    .bg::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background:
+        radial-gradient(900px 600px at 15% 0%, rgba(76, 195, 224, 0.22), transparent 65%),
+        radial-gradient(700px 500px at 90% 10%, rgba(139, 108, 255, 0.18), transparent 60%),
+        linear-gradient(180deg, rgba(7, 10, 14, 0.55) 0%, rgba(7, 10, 14, 0.92) 65%, #070a0e 100%);
     }
-    .logo {
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 30px;
-      border-radius: 50%;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      background: rgba(91, 192, 222, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-    }
-    .logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
-      border-radius: 50%;
+    .wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 0 22px; }
+    header { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand img { width: 46px; height: 46px; border-radius: 50%; object-fit: contain; }
+    .brand span { font-weight: 650; letter-spacing: -0.01em; }
+    header nav a { color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500; margin-left: 18px; }
+    header nav a:hover { color: var(--accent); }
+
+    .hero { padding: 70px 0 40px; text-align: center; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px; border-radius: 999px;
+      background: rgba(76, 195, 224, 0.1);
+      border: 1px solid rgba(76, 195, 224, 0.3);
+      color: var(--accent); font-size: 12.5px; font-weight: 600;
+      letter-spacing: 0.04em; margin-bottom: 22px;
     }
     h1 {
-      font-size: 48px;
-      margin: 0 0 16px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: clamp(38px, 6vw, 60px);
+      line-height: 1.05;
+      margin: 0 0 18px;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #ffffff 20%, var(--accent) 70%, var(--accent-2));
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .subtitle {
-      font-size: 20px;
-      color: var(--muted);
-      margin: 0 0 40px;
-    }
-    .nav-links {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
+    .subtitle { font-size: 18px; color: var(--muted); margin: 0 auto 34px; max-width: 620px; line-height: 1.6; }
+    .cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
     .btn {
-      display: inline-block;
-      padding: 16px 32px;
-      border-radius: 12px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      font-size: 16px;
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 15px 30px; border-radius: 12px;
+      font-weight: 650; font-size: 15.5px; text-decoration: none;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
     }
     .btn-primary {
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: #0a0d11;
-      box-shadow: var(--shadow);
+      color: #06121a;
+      box-shadow: 0 10px 30px rgba(76, 195, 224, 0.3);
     }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 24px 60px rgba(91, 192, 222, 0.4);
-    }
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text);
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 44px rgba(76, 195, 224, 0.45); }
+    .btn-secondary { background: rgba(255, 255, 255, 0.04); color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { border-color: var(--accent); background: rgba(255, 255, 255, 0.08); }
+
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; padding: 30px 0 80px; }
+    .feature {
+      background: rgba(15, 21, 29, 0.72);
       border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+      transition: border-color 0.2s ease, transform 0.2s ease;
     }
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: var(--accent);
+    .feature:hover { border-color: rgba(76, 195, 224, 0.4); transform: translateY(-2px); }
+    .feature .ic {
+      width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center;
+      background: rgba(76, 195, 224, 0.12); color: var(--accent); margin-bottom: 12px;
+    }
+    .feature h3 { margin: 0 0 6px; font-size: 15.5px; font-weight: 650; }
+    .feature p { margin: 0; color: var(--muted); font-size: 13.5px; line-height: 1.55; }
+    footer { padding: 0 0 40px; text-align: center; color: var(--muted-2); font-size: 12.5px; line-height: 1.6; }
+    footer a { color: var(--muted); }
+    @media (max-width: 600px) {
+      .hero { padding: 44px 0 30px; }
+      .btn { width: 100%; justify-content: center; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="logo">
-      <img src="./avion.png" alt="Avion">
-    </div>
-    <h1>Plan de Vol</h1>
-    <p class="subtitle">Log de navigation numérique</p>
-    <div class="nav-links">
-      <a href="./lognav.html" class="btn btn-primary">Créer un log de nav</a>
-      <a href="./a-propos.html" class="btn btn-secondary">À propos</a>
-    </div>
+  <div class="bg"></div>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <img src="./avion.png" alt="">
+        <span>Plan de Vol</span>
+      </div>
+      <nav>
+        <a href="./lognav.html?v=2.0.5">Créer un log</a>
+        <a href="./a-propos.html?v=2.0.5">À propos</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="badge">● Version 2 — calculs automatiques</div>
+      <h1>Votre log de nav VFR,<br>préparé en quelques minutes</h1>
+      <p class="subtitle">
+        Saisissez vos points de report : cap au vent, vitesse sol, temps de branche, heures
+        estimées, carburant et masse au décollage se calculent tout seuls. Le PDF sort en
+        quinconce comme un vrai log de nav, avec les cases ATIS et heures réelles laissées vierges.
+      </p>
+      <div class="cta">
+        <a href="./lognav.html?v=2.0.5" class="btn btn-primary">Créer un log de nav →</a>
+        <a href="./a-propos.html?v=2.0.5" class="btn btn-secondary">Comment ça marche</a>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="feature">
+        <div class="ic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><circle cx="18" cy="5" r="3"/><path d="M9 19h5a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h5"/></svg>
+        </div>
+        <h3>Triangle des vitesses</h3>
+        <p>Vent et déclinaison saisis une fois : route magnétique, cap corrigé, dérive et vitesse sol calculés sur chaque branche.</p>
+      </div>
+      <div class="feature">
+        <div class="ic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </div>
+        <h3>Temps enchaînés</h3>
+        <p>Temps de branche, cumuls, heures estimées à chaque point, durée totale réserves comprises : plus rien à additionner à la main.</p>
+      </div>
+      <div class="feature">
+        <div class="ic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h12V4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2Z"/><path d="M15 9h2a2 2 0 0 1 2 2v6a2 2 0 0 0 4 0V9l-3-3"/><path d="M3 10h12"/></svg>
+        </div>
+        <h3>Carburant &amp; masse</h3>
+        <p>AVGAS, UL91, Jet A-1, MOGAS… la masse volumique convertit les litres en kilos et contrôle la MTOW.</p>
+      </div>
+      <div class="feature">
+        <div class="ic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        </div>
+        <h3>PDF prêt à voler</h3>
+        <p>Mise en page en quinconce, cases ATIS, heures moteur et notes volontairement vierges pour être remplies en vol.</p>
+      </div>
+    </section>
+
+    <footer>
+      <p>
+        Sauvegarde automatique dans votre navigateur — rien n'est envoyé sur un serveur.<br>
+        Aide à la préparation : ne remplace ni la documentation officielle ni le manuel de vol. · <a href="./a-propos.html?v=2.0.5">À propos</a>
+      </p>
+    </footer>
   </div>
 </body>
 </html>

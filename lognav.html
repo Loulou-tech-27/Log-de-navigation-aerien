@@ -2,8 +2,10 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-cache" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Log de Navigation</title>
+  <title>Log de navigation VFR</title>
+  <meta name="description" content="Préparation de log de navigation VFR : calculs automatiques (vent, temps, carburant, masse) et export PDF prêt à imprimer.">
   <link rel="icon" type="image/x-icon" href="./favicon/favicon.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png">
   <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png">
@@ -11,248 +13,424 @@
   <link rel="manifest" href="./favicon/site.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css?v=2.0.5" />
 </head>
 <body>
   <div class="background"></div>
+
+  <!-- Symboles SVG réutilisés -->
+  <svg style="display:none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <symbol id="i-plane" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5a2.1 2.1 0 0 0-3-3L13 8 4.8 6.2a.5.5 0 0 0-.5.8l3.3 3.9-2.1 2.1-1.9-.5a.5.5 0 0 0-.5.8L5 15.4l1.9 2.1a.5.5 0 0 0 .8-.5l-.5-1.9 2.1-2.1 3.9 3.3a.5.5 0 0 0 .8-.5Z"/></symbol>
+    <symbol id="i-fuel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h12V4a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2Z"/><path d="M15 9h2a2 2 0 0 1 2 2v6a2 2 0 0 0 2 2 2 2 0 0 0 2-2V9l-3-3"/><path d="M3 10h12"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-takeoff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 21h20"/><path d="m3.5 12.5 2-3.5 6 2 3-8 3 1-1.5 8.5 5 1.6a1.8 1.8 0 0 1-.9 3.4L4.6 15.2a1.6 1.6 0 0 1-1.1-2.7Z"/></symbol>
+    <symbol id="i-landing" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 21h20"/><path d="M3 17h16.5a1.8 1.8 0 0 0 1.3-3.1l-3.6-3.6-1.5-8.6-2.9 1.1L14 11l-6-1-2-3.4-2.4.9 1.6 5.9"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><circle cx="18" cy="5" r="3"/><path d="M9 19h5a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h5"/></symbol>
+    <symbol id="i-notes" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 21h10M3 8l4-3 4 3M3 8l2 5h4Zm0 0"/><path d="M13 8l4-3 4 3M13 8l2 5h4Z"/></symbol>
+    <symbol id="i-pdf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20Z"/><path d="M12 9v5M12 17.5v.5"/></symbol>
+    <symbol id="i-flight" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></symbol>
+  </svg>
+
   <header class="site-header">
-    <div class="brand">
-      <img src="./avion.png" alt="Avion" class="logo">
+    <a class="brand" href="./index.html?v=2.0.5">
+      <img src="./avion.png" alt="" class="logo">
       <div>
-        <p class="eyebrow">Plan de vol</p>
-        <h1>Log de navigation numérique</h1>
+        <p class="eyebrow">Préparation de vol</p>
+        <h1>Log de navigation</h1>
       </div>
-    </div>
-    <div style="display: flex; gap: 12px; align-items: center;">
-      <a href="./index.html" style="color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500;">Accueil</a>
-      <a href="./a-propos.html" style="color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500;">À propos</a>
-      <button id="generate-pdf" class="primary">Télécharger le PDF</button>
+    </a>
+
+    <nav class="section-nav" id="section-nav">
+      <a href="#c-vol">Vol</a>
+      <a href="#c-avion">Avion</a>
+      <a href="#c-carburant">Carburant</a>
+      <a href="#c-depart">Départ</a>
+      <a href="#c-navigation">Navigation</a>
+      <a href="#c-arrivee">Arrivée</a>
+      <a href="#c-temps">Bilan</a>
+      <a href="#c-notes">Notes</a>
+    </nav>
+
+    <div class="header-actions">
+      <button type="button" class="ghost" id="btn-import" title="Charger un log enregistré (.json)">
+        <svg class="icon"><use href="#i-notes" xlink:href="#i-notes"/></svg><span class="label-hide">Importer</span>
+      </button>
+      <button type="button" class="ghost" id="btn-export" title="Enregistrer ce log en fichier .json">Exporter</button>
+      <button type="button" class="ghost danger" id="btn-reset" title="Effacer et repartir d'un log vierge">Réinitialiser</button>
+      <button type="button" class="primary" id="generate-pdf">
+        <svg class="icon"><use href="#i-pdf" xlink:href="#i-pdf"/></svg> Télécharger le PDF
+      </button>
+      <input type="file" id="file-import" accept="application/json,.json" hidden>
     </div>
   </header>
+
+  <div class="summary-bar" id="summary-bar">
+    <div class="chip" id="chip-route">
+      <span class="chip-label">Trajet</span>
+      <span class="chip-value" data-out="chip.route">—</span>
+    </div>
+    <div class="chip" id="chip-dist">
+      <span class="chip-label">Distance</span>
+      <span class="chip-value" data-out="chip.dist">—</span>
+    </div>
+    <div class="chip" id="chip-vol">
+      <span class="chip-label">Temps de vol</span>
+      <span class="chip-value" data-out="chip.tempsVol">—</span>
+    </div>
+    <div class="chip" id="chip-total">
+      <span class="chip-label">Temps total</span>
+      <span class="chip-value" data-out="chip.tempsTotal">—</span>
+    </div>
+    <div class="chip" id="chip-carb">
+      <span class="chip-label">Carburant</span>
+      <span class="chip-value" data-out="chip.carb">—</span>
+      <span class="chip-sub" data-out="chip.carbSub">nécessaire</span>
+    </div>
+    <div class="chip" id="chip-auto">
+      <span class="chip-label">Autonomie</span>
+      <span class="chip-value" data-out="chip.autonomie">—</span>
+    </div>
+    <div class="chip" id="chip-masse">
+      <span class="chip-label">Masse déco.</span>
+      <span class="chip-value" data-out="chip.masse">—</span>
+      <span class="chip-sub" data-out="chip.masseSub">/ MTOW</span>
+    </div>
+    <div class="save-state" id="save-state" title="Vos saisies sont conservées dans ce navigateur">
+      <span class="dot"></span><span id="save-text">Sauvegarde auto</span>
+    </div>
+  </div>
+
   <main class="app">
-    <section class="topbar">
-      <div>
-        <p class="lead">
-          Saisissez votre log de nav en ligne puis générez un PDF. Les zones ATIS
-          météo resteront volontairement vides dans le PDF pour être complétées plus tard.
-        </p>
-      </div>
-    </section>
+    <form id="nav-form" class="card-grid" autocomplete="off">
 
-    <form id="nav-form" class="card-grid">
-      <section class="card">
+      <!-- ============ VOL ============ -->
+      <section class="card" id="c-vol">
         <div class="card-header">
-          <h2>Avion</h2>
-          <p>Données de l'aéronef.</p>
+          <div class="card-icon"><svg class="icon"><use href="#i-flight" xlink:href="#i-flight"/></svg></div>
+          <div>
+            <h2>Le vol</h2>
+            <p>Identité du vol. L'heure de décollage sert à calculer les heures estimées à chaque point.</p>
+          </div>
         </div>
         <div class="form-grid two">
-          <label>Type d'avion<input id="avion_type" name="avion_type" type="text" placeholder="ex : DA40" required></label>
-          <label>Immatriculation<input id="avion_immat" name="avion_immat" type="text" placeholder="ex : F-XXXX" required></label>
+          <label class="field"><span>Date du vol</span><input type="date" data-path="meta.date"></label>
+          <label class="field"><span>Décollage estimé <span class="hint">(UTC)</span></span><input type="time" data-path="meta.decollage"></label>
+          <label class="field"><span>Pilote / instructeur</span><input type="text" data-path="meta.pilote" placeholder="Nom"></label>
+          <label class="field"><span>Indicatif radio</span><input type="text" data-path="meta.indicatif" placeholder="ex : F-GXXX"></label>
         </div>
-        <div class="form-grid two compact">
-          <label>VCR (kt)<input id="vcr" name="vcr" type="number" step="0.1" min="0" placeholder="ex : 115"></label>
-          <label>Masse maximale (kg)<input id="masse_max" name="masse_max" type="number" step="0.1" min="0" placeholder="ex : 1150"></label>
-        </div>
-        <div class="form-grid three compact">
-          <label>Nombre de passagers<input id="nb_passagers" name="nb_passagers" type="number" min="0" step="1" placeholder="ex : 3"></label>
-          <label>Altitude max (ft)<input id="altitude_max" name="altitude_max" type="number" step="100" min="0" placeholder="ex : 10000"></label>
-          <label>MTOW (kg)<input id="mtow" name="mtow" type="number" step="0.1" min="0" placeholder="ex : 1150"></label>
+        <div class="mini-stats">
+          <div class="mini-stat"><div class="k">Départ bloc estimé</div><div class="v" data-out="vol.bloc">—</div><div class="s">décollage − roulage</div></div>
+          <div class="mini-stat"><div class="k">Arrivée estimée</div><div class="v" data-out="vol.arrivee">—</div><div class="s">décollage + trajet + procédure</div></div>
+          <div class="mini-stat"><div class="k">Vitesse sol moyenne</div><div class="v" data-out="vol.vsMoy">—</div><div class="s">sur l'ensemble du trajet</div></div>
         </div>
       </section>
 
-      <section class="card">
+      <!-- ============ AVION ============ -->
+      <section class="card" id="c-avion">
         <div class="card-header">
-          <h2>Aéroport de départ</h2>
-          <p>Terrain, fréquences associées et ATIS départ.</p>
+          <div class="card-icon"><svg class="icon"><use href="#i-plane" xlink:href="#i-plane"/></svg></div>
+          <div>
+            <h2>Avion</h2>
+            <p>Choisissez un modèle pour pré-remplir, ou enregistrez votre propre machine.</p>
+          </div>
         </div>
         <div class="form-grid two">
-          <label>Aéroport de départ<input id="aero_dep" name="aero_dep" type="text" required></label>
-          <label>QFU
+          <div class="field field-avion">
+            <span>Modèle pré-enregistré
+              <button type="button" class="tiny" id="filtre-xp12" aria-pressed="false" style="margin-left:auto">X-Plane 12</button>
+            </span>
+            <select id="preset-avion"><option value="">— Saisie manuelle —</option></select>
+          </div>
+          <div class="field field-avion">
+            <span>Mes avions</span>
+            <div class="rangee-profil">
+              <select id="profil-avion" style="flex:1"><option value="">— Aucun —</option></select>
+              <button type="button" class="tiny" id="btn-save-profil" title="Enregistrer l'avion courant">Enregistrer</button>
+              <button type="button" class="tiny danger" id="btn-del-profil" title="Supprimer le profil sélectionné">Suppr.</button>
+            </div>
+          </div>
+        </div>
+        <div class="form-grid two">
+          <label class="field"><span>Type d'avion</span><input type="text" data-path="avion.type" placeholder="ex : DA40 NG"></label>
+          <label class="field"><span>Immatriculation</span><input type="text" data-path="avion.immat" placeholder="ex : F-HXXX" style="text-transform:uppercase"></label>
+        </div>
+        <div class="form-grid four">
+          <label class="field"><span>VCR / Vp</span><div class="input-suffix"><input type="number" step="1" min="0" data-path="avion.vcr" placeholder="115"><span class="suffix">kt</span></div></label>
+          <label class="field"><span>Masse à vide</span><div class="input-suffix"><input type="number" step="0.1" min="0" data-path="avion.masseVide" placeholder="780"><span class="suffix">kg</span></div></label>
+          <label class="field"><span>MTOW</span><div class="input-suffix"><input type="number" step="0.1" min="0" data-path="avion.mtow" placeholder="1150"><span class="suffix">kg</span></div></label>
+          <label class="field"><span>Capacité utile</span><div class="input-suffix"><input type="number" step="0.1" min="0" data-path="avion.capacite" placeholder="106"><span class="suffix">L</span></div></label>
+        </div>
+        <div class="form-grid two">
+          <label class="field"><span>Places passagers</span><input type="number" min="0" step="1" data-path="avion.nbPax" placeholder="3"></label>
+          <label class="field"><span>Plafond / altitude max</span><div class="input-suffix"><input type="number" step="100" min="0" data-path="avion.altitudeMax" placeholder="10000"><span class="suffix">ft</span></div></label>
+        </div>
+        <p class="inline-note"><strong>Valeurs indicatives.</strong> Les modèles pré-enregistrés donnent des ordres de grandeur : vérifiez systématiquement masses, capacités et consommations dans le manuel de vol de votre appareil.</p>
+      </section>
+
+      <!-- ============ CARBURANT & MASSE ============ -->
+      <section class="card wide" id="c-carburant">
+        <div class="card-header">
+          <div class="card-icon"><svg class="icon"><use href="#i-fuel" xlink:href="#i-fuel"/></svg></div>
+          <div>
+            <h2>Carburant &amp; masse</h2>
+            <p>La masse volumique du carburant choisi convertit automatiquement les litres en kilos.</p>
+          </div>
+        </div>
+        <div class="form-grid four">
+          <label class="field span-2">
+            <span>Type de carburant</span>
+            <select id="select-carburant" data-path="carburant.type"></select>
+          </label>
+          <label class="field">
+            <span>Masse volumique</span>
+            <div class="input-suffix"><input type="number" step="0.001" min="0.5" max="1.2" data-path="carburant.densite" id="input-densite"><span class="suffix">kg/L</span></div>
+          </label>
+          <label class="field">
+            <span>Consommation</span>
+            <div class="input-suffix"><input type="number" step="0.1" min="0" data-path="carburant.conso" placeholder="32"><span class="suffix">L/h</span></div>
+          </label>
+        </div>
+
+        <div class="form-grid four">
+          <label class="field"><span>Réservoir G</span><div class="input-suffix"><input type="number" step="0.1" min="0" data-path="carburant.tankG"><span class="suffix">L</span></div></label>
+          <label class="field"><span>Réservoir C</span><div class="input-suffix"><input type="number" step="0.1" min="0" data-path="carburant.tankC"><span class="suffix">L</span></div></label>
+          <label class="field"><span>Réservoir P</span><div class="input-suffix"><input type="number" step="0.1" min="0" data-path="carburant.tankP"><span class="suffix">L</span></div></label>
+          <div class="field">
+            <span>Total embarqué</span>
+            <div class="readonly-out" data-out="fuel.aBordL">—</div>
+          </div>
+        </div>
+
+        <div class="mini-stats">
+          <div class="mini-stat"><div class="k">Masse carburant</div><div class="v" data-out="fuel.masseCarb">—</div><div class="s" data-out="fuel.densiteInfo">—</div></div>
+          <div class="mini-stat"><div class="k">Carburant nécessaire</div><div class="v" data-out="fuel.necessaire">—</div><div class="s">réserves comprises</div></div>
+          <div class="mini-stat" id="ms-restant"><div class="k">Restant à l'arrivée</div><div class="v" data-out="fuel.restant">—</div><div class="s">après roulage, trajet et procédure</div></div>
+          <div class="mini-stat"><div class="k">Autonomie</div><div class="v" data-out="fuel.autonomie">—</div><div class="s">à la conso annoncée</div></div>
+          <div class="mini-stat"><div class="k">Remplissage</div><div class="v" data-out="fuel.remplissage">—</div><div class="s">de la capacité utile</div></div>
+        </div>
+
+        <div class="form-grid four" style="margin-top:16px">
+          <label class="field"><span>Équipage</span><div class="input-suffix"><input type="number" step="0.1" min="0" data-path="masse.equipage" placeholder="160"><span class="suffix">kg</span></div></label>
+          <label class="field"><span>Passagers</span><div class="input-suffix"><input type="number" step="0.1" min="0" data-path="masse.pax" placeholder="80"><span class="suffix">kg</span></div></label>
+          <label class="field"><span>Bagages</span><div class="input-suffix"><input type="number" step="0.1" min="0" data-path="masse.bagages" placeholder="20"><span class="suffix">kg</span></div></label>
+          <div class="field">
+            <span>Masse au décollage</span>
+            <div class="readonly-out" data-out="masse.total">—</div>
+          </div>
+        </div>
+        <div class="mini-stats">
+          <div class="mini-stat" id="ms-marge"><div class="k">Marge / MTOW</div><div class="v" data-out="masse.marge">—</div><div class="s" data-out="masse.detail">vide + équipage + pax + bagages + carburant</div></div>
+        </div>
+
+        <label class="field" style="margin-top:14px"><span>Observations carburant</span><textarea data-path="carburant.obs" placeholder="Avitaillement prévu, réservoir à privilégier, jaugeage…"></textarea></label>
+
+        <div class="alert danger" id="alertes-carburant"></div>
+      </section>
+
+      <!-- ============ DÉPART ============ -->
+      <section class="card" id="c-depart">
+        <div class="card-header">
+          <div class="card-icon"><svg class="icon"><use href="#i-takeoff" xlink:href="#i-takeoff"/></svg></div>
+          <div>
+            <h2>Terrain de départ</h2>
+            <p>Fréquences et terrain. L'ATIS reste vierge sur le PDF pour être noté en vol.</p>
+          </div>
+        </div>
+        <div class="form-grid two">
+          <label class="field"><span>Code OACI / nom</span><input type="text" data-path="dep.icao" placeholder="LFRS" style="text-transform:uppercase"></label>
+          <label class="field"><span>Altitude terrain</span><div class="input-suffix"><input type="number" step="1" data-path="dep.alti" placeholder="90"><span class="suffix">ft</span></div></label>
+          <label class="field">
+            <span>QFU <span class="hint">(réciproque auto)</span></span>
             <div class="qfu-pair">
-              <input id="qfu_dep1" name="qfu_dep1" type="number" min="1" max="36" step="1" placeholder="27">
+              <input type="number" min="1" max="360" step="1" data-path="dep.qfu1" id="qfu_dep1" placeholder="03">
               <span class="qfu-sep">/</span>
-              <input id="qfu_dep2" name="qfu_dep2" type="number" min="1" max="36" step="1" placeholder="09">
+              <input type="number" min="1" max="360" step="1" data-path="dep.qfu2" id="qfu_dep2" placeholder="21">
             </div>
           </label>
-          <label>Altitude terrain (ft)<input id="alti_dep" name="alti_dep" type="number" step="1" min="0"></label>
-          <label>OBS terrain départ<textarea id="obs_dep" name="obs_dep" class="autosize" placeholder="Observations diverses"></textarea></label>
+          <label class="field"><span>ATIS <span class="hint">fréquence</span></span><input type="text" inputmode="decimal" data-path="dep.atis" placeholder="127.475"></label>
         </div>
-        <div class="form-grid three compact">
-          <label>APP<input id="app_dep" name="app_dep" type="number" step="0.005" min="100" max="999" placeholder="Fréq. App"></label>
-          <label>TWR<input id="twr_dep" name="twr_dep" type="number" step="0.005" min="100" max="999" placeholder="Fréq. Tour"></label>
-          <label>SOL<input id="sol_dep" name="sol_dep" type="number" step="0.005" min="100" max="999" placeholder="Fréq. Sol"></label>
+        <div class="form-grid three">
+          <label class="field"><span>APP</span><input type="text" inputmode="decimal" data-path="dep.app" placeholder="119.400"></label>
+          <label class="field"><span>TWR</span><input type="text" inputmode="decimal" data-path="dep.twr" placeholder="118.700"></label>
+          <label class="field"><span>SOL</span><input type="text" inputmode="decimal" data-path="dep.sol" placeholder="121.750"></label>
         </div>
-        <div class="form-grid two compact">
-          <label>Fréquence ATIS départ<input id="atis_freq_dep" name="atis_freq_dep" type="number" step="0.005" min="100" max="999" placeholder="ex : 127.475"></label>
-        </div>
+        <label class="field" style="margin-top:12px"><span>Observations départ</span><textarea data-path="dep.obs" placeholder="Points VFR, consignes locales, taxiways…"></textarea></label>
       </section>
 
-      <section class="card">
+      <!-- ============ ARRIVÉE ============ -->
+      <section class="card" id="c-arrivee">
         <div class="card-header">
-          <h2>Temps & Réserves</h2>
-          <p>Carburant disponible, consommation et durées par phase. Le carburant nécessaire est calculé automatiquement.</p>
-        </div>
-        <div class="form-grid three compact">
-          <label>Carburant G (L)<input id="carb_g" name="carb_g" type="number" step="0.1"></label>
-          <label>Carburant C (L)<input id="carb_c" name="carb_c" type="number" step="0.1"></label>
-          <label>Carburant P (L)<input id="carb_p" name="carb_p" type="number" step="0.1"></label>
-        </div>
-        <div class="form-grid two compact">
-          <label>Consommation (L/h)<input id="conso_h" name="conso_h" type="number" step="0.1"></label>
-          <label>Observations carburant<textarea id="carb_obs" name="carb_obs" class="autosize"></textarea></label>
-        </div>
-        <div class="fuel-phases">
-          <div class="fuel-phase">
-            <label>Roulage / Départ (mn)<input id="t_roulage" name="t_roulage" type="number" min="0" step="1" class="time-input"></label>
-            <div class="fuel-result">
-              <span class="fuel-label">Carburant:</span>
-              <span id="fuel_roulage" class="fuel-value">-</span> L
-            </div>
+          <div class="card-icon"><svg class="icon"><use href="#i-landing" xlink:href="#i-landing"/></svg></div>
+          <div>
+            <h2>Terrain d'arrivée</h2>
+            <p>Idem : la case ATIS du PDF est laissée vierge pour la saisie en vol.</p>
           </div>
-          <div class="fuel-phase">
-            <label>Trajet (mn)<input id="t_trajet" name="t_trajet" type="number" min="0" step="1" class="time-input"></label>
-            <div class="fuel-result">
-              <span class="fuel-label">Carburant:</span>
-              <span id="fuel_trajet" class="fuel-value">-</span> L
-            </div>
+          <div class="header-tools">
+            <button type="button" class="tiny" id="copy-dep-to-arr" title="Recopier les données du terrain de départ (aller-retour)">Copier le départ</button>
           </div>
-          <div class="fuel-phase">
-            <label>Réserve vent (mn)<input id="t_res_vent" name="t_res_vent" type="number" min="0" step="1" class="time-input"></label>
-            <div class="fuel-result">
-              <span class="fuel-label">Carburant:</span>
-              <span id="fuel_res_vent" class="fuel-value">-</span> L
-            </div>
-          </div>
-          <div class="fuel-phase">
-            <label>Procédure arrivée (mn)<input id="t_proc" name="t_proc" type="number" min="0" step="1" class="time-input"></label>
-            <div class="fuel-result">
-              <span class="fuel-label">Carburant:</span>
-              <span id="fuel_proc" class="fuel-value">-</span> L
-            </div>
-          </div>
-          <div class="fuel-phase">
-            <label>Réserve obligatoire (mn)<input id="t_res_obl" name="t_res_obl" type="number" min="0" step="1" class="time-input"></label>
-            <div class="fuel-result">
-              <span class="fuel-label">Carburant:</span>
-              <span id="fuel_res_obl" class="fuel-value">-</span> L
-            </div>
-          </div>
-          <div class="fuel-phase">
-            <label>Réserve commandant (mn)<input id="t_res_com" name="t_res_com" type="number" min="0" step="1" class="time-input"></label>
-            <div class="fuel-result">
-              <span class="fuel-label">Carburant:</span>
-              <span id="fuel_res_com" class="fuel-value">-</span> L
-            </div>
-          </div>
-          <div class="fuel-phase total">
-            <div class="fuel-total-label">TOTAL</div>
-            <div class="fuel-result">
-              <span class="fuel-label">Temps total:</span>
-              <span id="time_total" class="fuel-value">-</span>
-            </div>
-            <div class="fuel-result">
-              <span class="fuel-label">Carburant total:</span>
-              <span id="fuel_total" class="fuel-value">-</span> L
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="card wide">
-        <div class="card-header">
-          <h2>Étapes du vol</h2>
-          <p>Segments à gauche, points de report décalés à droite.</p>
-        </div>
-        <div class="legs-table-wrapper">
-          <table class="legs-table">
-            <colgroup>
-              <col style="width: 11%;">
-              <col style="width: 9%;">
-              <col style="width: 11%;">
-              <col style="width: 12%;">
-              <col style="width: 12%;">
-              <col style="width: 2%;">
-              <col style="width: 13%;">
-              <col style="width: 10%;">
-              <col style="width: 20%;">
-            </colgroup>
-            <thead>
-              <tr>
-                <th colspan="5" class="seg-header">Segment</th>
-                <th class="spacer-header"></th>
-                <th colspan="2" class="point-header">Point de report</th>
-                <th class="notes-header">Notes</th>
-              </tr>
-              <tr class="sub-header">
-                <th>Alti QNH</th>
-                <th>Temps sans vent</th>
-                <th>Dist (NM)</th>
-                <th>RM avec vent</th>
-                <th>RM sans vent</th>
-                <th class="spacer-header"></th>
-                <th>Report</th>
-                <th>Heure ESTI</th>
-                <th>Notes</th>
-              </tr>
-            </thead>
-            <tbody id="legs-container"></tbody>
-          </table>
-        </div>
-        <div class="actions align-right">
-          <button id="add-leg" type="button" class="ghost">Ajouter une étape</button>
-        </div>
-      </section>
-
-      <section class="card">
-        <div class="card-header">
-          <h2>Arrivée</h2>
-          <p>Informations d'arrivée, fréquences, ATIS (fréquence) et grande zone de notes.</p>
         </div>
         <div class="form-grid two">
-          <label>Aéroport d'arrivée<input id="aero_arr" name="aero_arr" type="text"></label>
-          <div class="copy-departure-container">
-            <button id="copy-dep-to-arr" type="button" class="copy-departure-btn">Copier du départ</button>
-          </div>
-          <label>QFU
+          <label class="field"><span>Code OACI / nom</span><input type="text" data-path="arr.icao" placeholder="LFRD" style="text-transform:uppercase"></label>
+          <label class="field"><span>Altitude terrain</span><div class="input-suffix"><input type="number" step="1" data-path="arr.alti"><span class="suffix">ft</span></div></label>
+          <label class="field">
+            <span>QFU <span class="hint">(réciproque auto)</span></span>
             <div class="qfu-pair">
-              <input id="qfu_arr1" name="qfu_arr1" type="number" min="1" max="36" step="1">
+              <input type="number" min="1" max="360" step="1" data-path="arr.qfu1" id="qfu_arr1">
               <span class="qfu-sep">/</span>
-              <input id="qfu_arr2" name="qfu_arr2" type="number" min="1" max="36" step="1">
+              <input type="number" min="1" max="360" step="1" data-path="arr.qfu2" id="qfu_arr2">
             </div>
           </label>
-          <label>Altitude terrain (ft)<input id="alti_arr" name="alti_arr" type="number" step="1" min="0"></label>
-          <label>OBS arrivée<textarea id="obs_arr" name="obs_arr" class="autosize"></textarea></label>
+          <label class="field"><span>ATIS <span class="hint">fréquence</span></span><input type="text" inputmode="decimal" data-path="arr.atis"></label>
         </div>
-        <div class="form-grid three compact">
-          <label>APP arrivée<input id="app_arr" name="app_arr" type="number" step="0.005" min="100" max="999" placeholder="Fréq. App"></label>
-          <label>TWR arrivée<input id="twr_arr" name="twr_arr" type="number" step="0.005" min="100" max="999" placeholder="Fréq. Tour"></label>
-          <label>SOL arrivée<input id="sol_arr" name="sol_arr" type="number" step="0.005" min="100" max="999" placeholder="Fréq. Sol"></label>
+        <div class="form-grid three">
+          <label class="field"><span>APP</span><input type="text" inputmode="decimal" data-path="arr.app"></label>
+          <label class="field"><span>TWR</span><input type="text" inputmode="decimal" data-path="arr.twr"></label>
+          <label class="field"><span>SOL</span><input type="text" inputmode="decimal" data-path="arr.sol"></label>
         </div>
-        <div class="form-grid two compact">
-          <label>Fréquence ATIS arrivée<input id="atis_freq_arr" name="atis_freq_arr" type="number" step="0.005" min="100" max="999"></label>
+        <label class="field" style="margin-top:12px"><span>Observations arrivée</span><textarea data-path="arr.obs" placeholder="Intégration, points de report obligatoires…"></textarea></label>
+
+        <div class="card-header" style="margin-top:20px">
+          <div>
+            <h2 style="font-size:14px">Terrain de dégagement</h2>
+            <p>Optionnel — apparaît sur le PDF s'il est renseigné.</p>
+          </div>
         </div>
-        <div class="form-grid one compact">
-          <label>Notes finale / Arrivée<textarea id="notes_arr" name="notes_arr" class="autosize large"></textarea></label>
+        <div class="form-grid four">
+          <label class="field"><span>OACI</span><input type="text" data-path="deg.icao" style="text-transform:uppercase"></label>
+          <label class="field"><span>Distance</span><div class="input-suffix"><input type="number" step="0.1" min="0" data-path="deg.dist"><span class="suffix">NM</span></div></label>
+          <label class="field"><span>Fréquence</span><input type="text" inputmode="decimal" data-path="deg.freq"></label>
+          <label class="field"><span>Altitude</span><div class="input-suffix"><input type="number" step="1" data-path="deg.alti"><span class="suffix">ft</span></div></label>
         </div>
       </section>
 
-      <section class="card">
+      <!-- ============ NAVIGATION ============ -->
+      <section class="card wide" id="c-navigation">
         <div class="card-header">
-          <h2>Notes générales</h2>
-          <p>Zone libre pour rappels, NOTAM, menaces, items briefing.</p>
+          <div class="card-icon"><svg class="icon"><use href="#i-route" xlink:href="#i-route"/></svg></div>
+          <div>
+            <h2>Navigation</h2>
+            <p>Points de report et branches en quinconce, exactement comme sur le PDF. Cap, vitesse sol, temps et heures estimées sont calculés.</p>
+          </div>
         </div>
-        <label>Notes<textarea id="notes_globales" name="notes_globales" class="autosize large"></textarea></label>
+
+        <div class="nav-params">
+          <label class="field">
+            <span>Vent <span class="hint">d'où il vient</span></span>
+            <div class="input-suffix"><input type="number" min="0" max="360" step="5" data-path="nav.ventDir" placeholder="270"><span class="suffix">°</span></div>
+          </label>
+          <label class="field">
+            <span>Force du vent</span>
+            <div class="input-suffix"><input type="number" min="0" step="1" data-path="nav.ventVit" placeholder="15"><span class="suffix">kt</span></div>
+          </label>
+          <label class="field">
+            <span>Déclinaison <span class="hint">Est +</span></span>
+            <div class="input-suffix"><input type="number" step="0.5" data-path="nav.dm" placeholder="1"><span class="suffix">°</span></div>
+          </label>
+          <div class="field">
+            <span>Route saisie en</span>
+            <div class="segmented">
+              <input type="radio" name="modeRoute" id="mode-rv" value="rv" data-path="nav.modeRoute"><label for="mode-rv">Rv (vraie)</label>
+              <input type="radio" name="modeRoute" id="mode-rm" value="rm" data-path="nav.modeRoute"><label for="mode-rm">Rm (magnétique)</label>
+            </div>
+          </div>
+          <div class="field">
+            <span>Vent appliqué</span>
+            <div class="readonly-out" data-out="nav.ventInfo" style="font-size:12.5px">—</div>
+          </div>
+        </div>
+
+        <div class="timeline" id="timeline"></div>
+
+        <div class="tl-actions">
+          <button type="button" class="ghost" id="add-point">+ Ajouter un point de report</button>
+          <button type="button" class="ghost" id="reverse-route" title="Inverser le sens du trajet (retour)">↺ Inverser le trajet</button>
+          <span style="align-self:center;font-size:11.5px;color:var(--muted-2)">Astuce : <span class="kbd">Entrée</span> dans le dernier champ ajoute un point.</span>
+        </div>
+
+        <div class="nav-totals">
+          <div class="mini-stat" style="background:none;border:none;padding:0"><div class="k">Distance totale</div><div class="v" data-out="nav.dist">—</div></div>
+          <div class="mini-stat" style="background:none;border:none;padding:0"><div class="k">Temps sans vent</div><div class="v" data-out="nav.tsv">—</div></div>
+          <div class="mini-stat" style="background:none;border:none;padding:0"><div class="k">Temps avec vent</div><div class="v" data-out="nav.tav">—</div></div>
+          <div class="mini-stat" style="background:none;border:none;padding:0"><div class="k">Effet du vent</div><div class="v" data-out="nav.effetVent">—</div></div>
+          <div class="mini-stat" style="background:none;border:none;padding:0"><div class="k">Branches</div><div class="v" data-out="nav.nbLegs">—</div></div>
+        </div>
+
+        <div class="alert warn" id="alertes-nav"></div>
       </section>
+
+      <!-- ============ TEMPS & RÉSERVES ============ -->
+      <section class="card wide" id="c-temps">
+        <div class="card-header">
+          <div class="card-icon"><svg class="icon"><use href="#i-clock" xlink:href="#i-clock"/></svg></div>
+          <div>
+            <h2>Bilan temps &amp; carburant</h2>
+            <p>Le trajet est repris automatiquement de la navigation ; la réserve vent vaut 10 % du trajet. Décochez pour saisir à la main.</p>
+          </div>
+        </div>
+        <div class="table-scroll">
+        <table class="phase-table" id="phase-table">
+          <thead>
+            <tr>
+              <th class="c-phase">Phase</th>
+              <th class="num c-duree">Durée (mn)</th>
+              <th class="num">Cumul</th>
+              <th class="num">Carburant</th>
+              <th class="c-outils"></th>
+            </tr>
+          </thead>
+          <tbody id="phase-body"></tbody>
+        </table>
+        </div>
+        <div class="mini-stats">
+          <div class="mini-stat"><div class="k">Temps total</div><div class="v" data-out="temps.total">—</div><div class="s">réserves comprises</div></div>
+          <div class="mini-stat"><div class="k">Temps de vol facturé</div><div class="v" data-out="temps.vol">—</div><div class="s">roulage + trajet + procédure</div></div>
+          <div class="mini-stat"><div class="k">Carburant total</div><div class="v" data-out="temps.fuelTotal">—</div><div class="s">à la conso annoncée</div></div>
+        </div>
+      </section>
+
+      <!-- ============ NOTES ============ -->
+      <section class="card wide" id="c-notes">
+        <div class="card-header">
+          <div class="card-icon"><svg class="icon"><use href="#i-notes" xlink:href="#i-notes"/></svg></div>
+          <div>
+            <h2>Notes &amp; briefing</h2>
+            <p>Ce texte est imprimé sur le PDF. Des lignes vierges sont ajoutées à côté pour écrire en vol.</p>
+          </div>
+          <div class="header-tools">
+            <button type="button" class="tiny" id="btn-modele-notes" title="Insérer un canevas de briefing">Canevas briefing</button>
+          </div>
+        </div>
+        <div class="form-grid two">
+          <label class="field"><span>Notes générales <span class="hint">(NOTAM, menaces, espaces…)</span></span><textarea class="large" data-path="notes"></textarea></label>
+          <label class="field"><span>Notes arrivée / finale</span><textarea class="large" data-path="arr.notes"></textarea></label>
+        </div>
+      </section>
+
     </form>
   </main>
+
+  <button type="button" class="primary fab-pdf" id="generate-pdf-mobile" aria-label="Télécharger le PDF">
+    <svg class="icon"><use href="#i-pdf" xlink:href="#i-pdf"/></svg> PDF
+  </button>
+
   <footer class="site-footer">
-    <p>ATIS météo volontairement laissé vide dans le PDF pour saisie terrain. Généré automatiquement depuis ce formulaire numérique.</p>
+    <p>
+      Les zones ATIS, heures réelles, heures moteur et notes de vol sont volontairement laissées vierges sur le PDF pour être remplies en vol.<br>
+      Document d'aide à la préparation — il ne remplace ni la documentation officielle ni le manuel de vol. · <a href="./a-propos.html?v=2.0.5">À propos</a>
+    </p>
   </footer>
+
+  <div class="toast-zone" id="toast-zone"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
-  <script src="./script.js"></script>
+  <script src="./js/data.js?v=2.0.5"></script>
+  <script src="./js/calc.js?v=2.0.5"></script>
+  <script src="./js/store.js?v=2.0.5"></script>
+  <script src="./js/pdf.js?v=2.0.5"></script>
+  <script src="./js/app.js?v=2.0.5"></script>
 </body>
 </html>
-

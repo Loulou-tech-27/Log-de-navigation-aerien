@@ -2,8 +2,9 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-cache" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>À propos - Plan de Vol</title>
+  <title>À propos — Plan de Vol</title>
   <link rel="icon" type="image/x-icon" href="./favicon/favicon.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png">
   <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png">
@@ -15,161 +16,174 @@
   <style>
     :root {
       color-scheme: dark;
-      --bg: #0a0d11;
-      --surface: #11161f;
-      --muted: #7b8798;
-      --text: #e8ecf2;
-      --accent: #5bc0de;
-      --accent-2: #9b6bff;
-      --border: #1f2530;
+      --bg: #070a0e; --surface: #0f151d; --muted: #8b97a8; --muted-2: #64707f;
+      --text: #e6ecf3; --accent: #4cc3e0; --accent-2: #8b6cff; --border: #1e2733;
       --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+      --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     }
     * { box-sizing: border-box; }
     body {
-      margin: 0;
-      font-family: "Inter", system-ui, -apple-system, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      position: relative;
-      overflow-x: hidden;
+      margin: 0; font-family: "Inter", system-ui, -apple-system, sans-serif;
+      background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: 
-        radial-gradient(circle at 20% 20%, rgba(91, 192, 222, 0.18), transparent 35%),
-        radial-gradient(circle at 80% 10%, rgba(155, 107, 255, 0.14), transparent 30%),
-        radial-gradient(circle at 70% 70%, rgba(91, 192, 222, 0.12), transparent 25%);
-      filter: blur(50px);
-      opacity: 0.7;
-      z-index: 0;
-    }
-    body::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      background: url("./DA40.png") center center / cover no-repeat;
-      opacity: 0.4;
-      pointer-events: none;
-      z-index: 0;
+    .bg {
+      position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 0; pointer-events: none;
+      background:
+        radial-gradient(900px 500px at 12% 0%, rgba(76, 195, 224, 0.14), transparent 65%),
+        radial-gradient(700px 500px at 92% 5%, rgba(139, 108, 255, 0.12), transparent 60%);
     }
     .header {
-      position: sticky;
-      top: 0;
-      z-index: 5;
-      padding: 20px;
-      background: rgba(10, 13, 17, 0.9);
-      backdrop-filter: blur(10px);
+      position: sticky; top: 0; z-index: 5; padding: 15px 22px;
+      background: rgba(8, 11, 16, 0.88); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
     }
-    .header a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .header a:hover {
-      text-decoration: underline;
-    }
-    .container {
-      position: relative;
-      z-index: 1;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 60px 20px;
-    }
+    .header a { color: var(--muted); text-decoration: none; font-weight: 550; font-size: 14px; }
+    .header a:hover { color: var(--accent); }
+    .header .cta { color: var(--accent); }
+    .container { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 50px 22px 80px; }
     h1 {
-      font-size: 42px;
-      margin: 0 0 20px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .card {
-      background: rgba(17, 22, 31, 0.8);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 40px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(6px);
-      margin-bottom: 30px;
-    }
-    h2 {
-      color: var(--accent);
-      margin: 0 0 16px;
-      font-size: 24px;
-    }
-    p {
-      line-height: 1.7;
-      color: var(--text);
-      margin: 0 0 16px;
+      font-size: clamp(32px, 5vw, 44px); margin: 0 0 10px; letter-spacing: -0.025em;
+      background: linear-gradient(135deg, #fff, var(--accent) 75%, var(--accent-2));
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
     }
     .version-badge {
-      display: inline-block;
-      padding: 6px 12px;
-      background: rgba(91, 192, 222, 0.2);
-      border: 1px solid var(--accent);
-      border-radius: 8px;
-      color: var(--accent);
-      font-weight: 600;
-      font-size: 14px;
-      margin-left: 12px;
+      display: inline-block; padding: 5px 11px; border-radius: 8px; font-size: 12.5px; font-weight: 650;
+      background: rgba(76, 195, 224, 0.14); border: 1px solid rgba(76, 195, 224, 0.4); color: var(--accent);
+      vertical-align: middle; margin-left: 10px;
     }
-    ul {
-      line-height: 1.8;
-      color: var(--text);
-      padding-left: 24px;
+    .lead { color: var(--muted); font-size: 16.5px; line-height: 1.65; margin: 0 0 34px; }
+    .card {
+      background: rgba(15, 21, 29, 0.75); border: 1px solid var(--border); border-radius: 16px;
+      padding: 26px 28px; box-shadow: var(--shadow); margin-bottom: 16px;
     }
-    li {
-      margin-bottom: 8px;
+    h2 { color: var(--text); margin: 0 0 14px; font-size: 19px; letter-spacing: -0.01em; display: flex; align-items: center; gap: 9px; }
+    h2::before { content: ""; width: 4px; height: 18px; border-radius: 2px; background: linear-gradient(180deg, var(--accent), var(--accent-2)); }
+    h3 { font-size: 14.5px; margin: 20px 0 8px; color: var(--accent); }
+    p { line-height: 1.65; margin: 0 0 12px; color: #cdd6e0; font-size: 14.5px; }
+    ul { line-height: 1.7; padding-left: 20px; margin: 0 0 8px; color: #cdd6e0; font-size: 14.5px; }
+    li { margin-bottom: 7px; }
+    li strong { color: var(--text); }
+    code {
+      font-family: var(--mono); font-size: 13px; background: rgba(255, 255, 255, 0.06);
+      padding: 2px 6px; border-radius: 5px; color: var(--accent);
     }
+    .formula {
+      font-family: var(--mono); font-size: 13px; line-height: 1.9; color: #cdd6e0;
+      background: rgba(255, 255, 255, 0.03); border-left: 2px solid var(--accent);
+      padding: 12px 16px; border-radius: 0 8px 8px 0; margin: 12px 0; overflow-x: auto;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 10px; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted-2); font-size: 11px; text-transform: uppercase; letter-spacing: 0.07em; }
+    td.num { font-family: var(--mono); text-align: right; color: var(--accent); }
+    .warn {
+      background: rgba(255, 180, 84, 0.09); border: 1px solid rgba(255, 180, 84, 0.35);
+      color: #ffd9a8; border-radius: 12px; padding: 16px 18px; font-size: 14px; line-height: 1.6;
+    }
+    .warn strong { color: #ffc477; }
+    footer { text-align: center; color: var(--muted-2); font-size: 12.5px; padding: 10px 0 0; }
   </style>
 </head>
 <body>
+  <div class="bg"></div>
   <div class="header">
-    <a href="./index.html">← Retour à l'accueil</a>
+    <a href="./index.html?v=2.0.5">← Retour à l'accueil</a>
+    <a href="./lognav.html?v=2.0.5" class="cta">Créer un log de nav →</a>
   </div>
+
   <div class="container">
+    <h1>À propos<span class="version-badge">Version 2.0</span></h1>
+    <p class="lead">
+      Plan de Vol prépare vos logs de navigation VFR : vous saisissez la route et les
+      caractéristiques de l'avion, l'application calcule le reste et produit un PDF
+      conçu pour être imprimé et complété en vol.
+    </p>
+
     <div class="card">
-      <h1>À propos<span class="version-badge">Version 1.0</span></h1>
-      
-      <h2>Le concept</h2>
-      <p>
-        Plan de Vol est une application web qui permet de créer et gérer des logs de navigation aéronautique de manière numérique. 
-        Cette application remplace les traditionnels logs papier par une interface moderne et intuitive.
-      </p>
-      
-      <h2>Fonctionnalités</h2>
+      <h2>Ce qui est calculé automatiquement</h2>
       <ul>
-        <li>Saisie complète des informations de vol (avion, aéroports, fréquences)</li>
-        <li>Gestion des étapes de vol (segments et points de report)</li>
-        <li>Calcul automatique du carburant nécessaire selon la consommation et les durées</li>
-        <li>Génération de PDF professionnel</li>
-        <li>Interface sombre et épurée, optimisée pour la saisie</li>
+        <li><strong>Triangle des vitesses</strong> — à partir du vent et de la vitesse propre : dérive, cap magnétique corrigé et vitesse sol de chaque branche.</li>
+        <li><strong>Route magnétique</strong> — conversion Rv ↔ Rm avec la déclinaison magnétique (comptée positive vers l'Est).</li>
+        <li><strong>Temps</strong> — temps sans vent, temps corrigé, cumuls, et heure estimée de passage à chaque point à partir de l'heure de décollage.</li>
+        <li><strong>Bilan des durées</strong> — le trajet est repris de la navigation, la réserve vent vaut 10 % du trajet, le total additionne toutes les phases.</li>
+        <li><strong>Carburant</strong> — consommation par phase, besoin total, autonomie, marge et carburant restant estimé à l'arrivée.</li>
+        <li><strong>Masse</strong> — les litres deviennent des kilos via la masse volumique du carburant, et la masse au décollage est comparée à la MTOW.</li>
+        <li><strong>Alertes</strong> — carburant insuffisant, dépassement de MTOW ou de capacité, dérive excessive, altitude au-dessus du plafond.</li>
       </ul>
-      
-      <h2>Version 1.0</h2>
-      <p>
-        Cette première version (V1.0) constitue la base fonctionnelle de l'application. 
-        Elle permet la création complète de logs de navigation avec toutes les informations essentielles 
-        pour un vol en sécurité.
-      </p>
-      <p>
-        Les améliorations futures incluront notamment des fonctionnalités supplémentaires, 
-        l'optimisation de l'expérience utilisateur, et la possibilité de sauvegarder et charger 
-        des logs précédents.
-      </p>
-      
-      <h2>Utilisation</h2>
-      <p>
-        Pour créer un nouveau log de navigation, cliquez sur "Créer un log de nav" depuis la page d'accueil. 
-        Remplissez tous les champs nécessaires, ajoutez vos étapes de vol, et générez le PDF final 
-        pour l'archiver ou l'imprimer.
+
+      <h3>Les formules employées</h3>
+      <div class="formula">
+        dérive   X  = asin( Vw · sin(Dw − Rv) / Vp )<br>
+        cap      Cm = Rm + X<br>
+        vit. sol Vs = Vp · cos(X) − Vw · cos(Dw − Rv)<br>
+        temps    T  = Distance / Vs × 60<br>
+        route    Rm = Rv − Dm   (Dm positive vers l'Est)<br>
+        carbu.   L  = Durée / 60 × Consommation horaire<br>
+        masse    kg = Litres × masse volumique
+      </div>
+      <p style="color:var(--muted-2);font-size:13px;margin:0">
+        Le vent est celui de la météo, donc exprimé en direction vraie et « d'où il vient ».
+        Un vent local peut être saisi branche par branche, comme la vitesse propre (utile en montée).
       </p>
     </div>
+
+    <div class="card">
+      <h2>Carburants disponibles</h2>
+      <p>La masse volumique associée sert à convertir l'emport en kilos. Toute autre valeur peut être saisie librement.</p>
+      <table>
+        <thead><tr><th>Carburant</th><th>Usage</th><th style="text-align:right">Masse volumique</th></tr></thead>
+        <tbody>
+          <tr><td>AVGAS 100LL / 100</td><td>Essence aviation la plus répandue</td><td class="num">0,720 kg/L</td></tr>
+          <tr><td>UL 91 / UL 94</td><td>Essence aviation sans plomb</td><td class="num">0,715 kg/L</td></tr>
+          <tr><td>MOGAS SP95 / SP98</td><td>Essence auto (si autorisée par STC)</td><td class="num">0,750 kg/L</td></tr>
+          <tr><td>Jet A-1</td><td>Moteurs diesel et turbines</td><td class="num">0,800 kg/L</td></tr>
+          <tr><td>Jet A / Jet B</td><td>Kérosènes régionaux</td><td class="num">0,810 / 0,780 kg/L</td></tr>
+          <tr><td>Gazole / GNR</td><td>Moteurs diesel certifiés</td><td class="num">0,840 kg/L</td></tr>
+          <tr><td>Personnalisé</td><td>Toute autre valeur</td><td class="num">au choix</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Le PDF</h2>
+      <p>
+        Le tableau de navigation est disposé <strong>en quinconce</strong> : les points de report
+        occupent des lignes larges décalées à gauche, les branches des lignes décalées à droite,
+        exactement comme sur un log de nav papier. Chaque branche est donc lue « entre » ses deux points.
+      </p>
+      <h3>Ce qui reste volontairement vierge</h3>
+      <ul>
+        <li>Les deux grilles <strong>ATIS</strong> (départ et arrivée) — seule la fréquence est imprimée.</li>
+        <li>Les colonnes <strong>heure réelle</strong> et <strong>carburant restant</strong> de chaque point.</li>
+        <li>Les <strong>heures moteur et bloc</strong>, le décollage et l'atterrissage réels.</li>
+        <li>La colonne <strong>relevé réel</strong> du tableau carburant.</li>
+        <li>Des <strong>lignes de notes</strong> vierges pour écrire en vol.</li>
+      </ul>
+      <p>Un log entièrement vide produit d'ailleurs un formulaire papier prêt à remplir à la main.</p>
+    </div>
+
+    <div class="card">
+      <h2>Confort de saisie</h2>
+      <ul>
+        <li><strong>Sauvegarde automatique</strong> — tout est conservé dans le navigateur : recharger la page ne perd rien.</li>
+        <li><strong>Import / export JSON</strong> — pour archiver un log ou le rouvrir sur une autre machine.</li>
+        <li><strong>Profils avion</strong> — 42 modèles pré-remplis classés par famille (ULM, école, voyage, bimoteurs, classiques comme le DC-3), un filtre pour n'afficher que la flotte par défaut de X-Plane 12, et vos propres machines enregistrées.</li>
+        <li><strong>Inversion du trajet</strong> — un clic prépare le vol retour (points inversés, routes à +180°, terrains échangés).</li>
+        <li><strong>QFU réciproque</strong> calculé, <strong>copie du terrain de départ</strong> vers l'arrivée.</li>
+        <li><strong>Raccourcis</strong> — <code>Entrée</code> ajoute un point, <code>Ctrl/⌘ + S</code> génère le PDF.</li>
+      </ul>
+    </div>
+
+    <div class="card warn">
+      <strong>Avertissement.</strong> Cet outil est une aide à la préparation. Les modèles d'avion
+      proposés donnent des ordres de grandeur : masses, capacités, vitesses et consommations doivent
+      être vérifiées dans le manuel de vol de l'appareil. Les calculs ne remplacent ni la
+      documentation officielle (cartes, NOTAM, AIP), ni le jugement du commandant de bord.
+    </div>
+
+    <footer>Aucune donnée n'est envoyée sur un serveur : tout reste dans votre navigateur.</footer>
   </div>
 </body>
 </html>
-
